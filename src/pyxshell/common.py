@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import os
 import re
 import collections
+import fnmatch
 
 from pyxshell.pipeline import pipe
 
@@ -151,6 +153,31 @@ def unix2dos( stdin ):
     """
     for line in stdin:
         yield line.replace("\n","\r\n")
+
+
+@pipe
+def dir_file( paths ):
+    """
+    Yields the file name and its absolute path in a tuple,
+    expand home and vars if necessary.
+    """
+    for path in paths:
+        p = os.path.abspath( path )
+        yield ( os.path.dirname(p),os.path.basename(p) )
+
+
+@pipe
+def expand( filepatterns ):
+    """
+    Yelds file names matching each 'filepatterns'.
+    """
+    if len(filepatterns) == 0:
+        yield (i for i in [] )
+
+    for base_dir,filepattern in dir_file(filepatterns):
+        for dirname, dirs, files in os.walk( base_dir ):
+            for filename in fnmatch.filter(files, filepattern):
+                yield os.path.join(dirname, filename)
 
 
 @pipe
