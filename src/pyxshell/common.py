@@ -87,6 +87,30 @@ def grep_in( lines, patterns=[] ):
 
 
 @pipe
+def dos2unix( lines ):
+    """
+    Replace DOS-like newline characters by UNIX-like ones.
+
+        >>> list( iter(["dos\r\n","unix\n"]) | dos2unix()
+        ['dos\n', 'unix\n']
+    """
+    for line in lines:
+        yield line.replace("\r\n","\n")
+
+
+@pipe
+def unix2dos( lines ):
+    """
+    Replace UNIX-like newline characters by DOS-like ones.
+
+        >>> list( iter(["dos\r\n","unix\n"]) | unix2dos()
+        ['dos\r\n', 'unix\r\n']
+    """
+    for line in lines:
+        yield line.replace("\n","\r\n")
+
+
+@pipe
 def sed(stdin, pattern_src, replacement, exclusive=False):
     """
     Apply :func:`re.sub` to each line on stdin with the given pattern/repl.
