@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import collections
 
 from pyxshell.pipeline import pipe
 
@@ -74,39 +75,66 @@ def is_in( line, patterns = [] ):
     return False
 
 @pipe
-def grep_in( lines, patterns=[] ):
+def grep_in( stdin, patterns=[] ):
     """
     Filter strings on stdin for any string in a given list (uses :func:`in`).
 
         >>> list(iter(['cat', 'cabbage', 'conundrum', 'cathedral']) | grep_in(["cat","cab"]))
         ['cat', 'cabbage', 'cathedral']
     """
-    for line in lines:
+    for line in stdin:
         if is_in( line, patterns ):
             yield line
 
 
 @pipe
-def dos2unix( lines ):
+def cut( stdin, fields=None, delimiter=None ):
+    """
+    Yields the fields-th items of the strings splited as a list according to the
+    delimiter.
+    If delimiter is None, any whitespace-like character is used to split.
+    If fields is None, every field are returned.
+
+        >>> list( iter( ["You don't NEED to follow ME","You don't NEED to follow ANYBODY!"] ) | cut(1,"NEED to"))
+        [' follow ME', ' follow ANYBODY!']
+        >>> list( iter( ["I say you are Lord","and I should know !","I've followed a few !"] ) | cut([4]) )
+        [['Lord'], ['!'], ['!']]
+        >>> list( iter( ["You don't NEED to follow ME","You don't NEED to follow ANYBODY!"] ) | cut([0,1],"NEED to"))
+        [["You don't ", ' follow ME'], ["You don't ", ' follow ANYBODY!']]
+        >>> list( iter( ["I say you are Lord","and I should know !","I've followed a few !"] ) | cut([4,1]) )
+        [['Lord', 'say'], ['!', 'I'], ['!', 'followed']]
+    """
+    for string in stdin:
+        if fields is None:
+            yield string.split(delimiter)[:]
+        elif isinstance(fields, collections.Iterable):
+            data = string.split(delimiter)
+            yield [data[i] for i in fields]
+        else:
+            yield string.split(delimiter)[fields]
+
+
+@pipe
+def dos2unix( stdin ):
     """
     Replace DOS-like newline characters by UNIX-like ones.
 
         >>> list( iter(["dos\r\n","unix\n"]) | dos2unix()
         ['dos\n', 'unix\n']
     """
-    for line in lines:
+    for line in stdin:
         yield line.replace("\r\n","\n")
 
 
 @pipe
-def unix2dos( lines ):
+def unix2dos( stdin ):
     """
     Replace UNIX-like newline characters by DOS-like ones.
 
         >>> list( iter(["dos\r\n","unix\n"]) | unix2dos()
         ['dos\r\n', 'unix\r\n']
     """
-    for line in lines:
+    for line in stdin:
         yield line.replace("\n","\r\n")
 
 
