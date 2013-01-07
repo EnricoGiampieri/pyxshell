@@ -115,6 +115,21 @@ def cut( stdin, fields=None, delimiter=None ):
 
 
 @pipe
+def join( stdin, delimiter=" " ):
+    """
+        Join every list items in the input with the given delimiter.
+        The default delimiter is a space.
+
+        >>> list( iter( ["- Yes, we are all different!\t- I'm not!"] ) | cut() | join() )
+        ["- Yes, we are all different! - I'm not!"]
+        >>> list( iter( ["- Yes, we are all different!\t- I'm not!"] ) | cut(delimiter="all") | join("NOT") )
+        ["- Yes, we are NOT different!\t- I'm not!"]
+    """
+    for lst in stdin:
+        yield delimiter.join(lst)
+
+
+@pipe
 def dos2unix( stdin ):
     """
     Replace DOS-like newline characters by UNIX-like ones.
