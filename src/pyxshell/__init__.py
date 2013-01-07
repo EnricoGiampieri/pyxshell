@@ -29,7 +29,7 @@ def _get_tests():
 
     suite = unittest.TestSuite()
     for name, module in sys.modules.iteritems():
-        if name.startswith('calabash'):
+        if name.startswith('pyxshell'):
             try:
                 mod_suite = doctest.DocTestSuite(module, test_finder=finder)
             except ValueError:

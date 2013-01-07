@@ -2,7 +2,7 @@
 
 import re
 
-from calabash.pipeline import pipe
+from pyxshell.pipeline import pipe
 
 
 @pipe
