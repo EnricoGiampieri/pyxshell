@@ -67,6 +67,25 @@ def grep(stdin, pattern_src):
             yield line
 
 
+def is_in( line, patterns = [] ):
+    for pattern in patterns:
+        if pattern in line:
+            return True
+    return False
+
+@pipe
+def grep_in( lines, patterns=[] ):
+    """
+    Filter strings on stdin for any string in a given list (uses :func:`in`).
+
+        >>> list(iter(['cat', 'cabbage', 'conundrum', 'cathedral']) | grep_in(["cat","cab"]))
+        ['cat', 'cabbage', 'cathedral']
+    """
+    for line in lines:
+        if is_in( line, patterns ):
+            yield line
+
+
 @pipe
 def sed(stdin, pattern_src, replacement, exclusive=False):
     """
