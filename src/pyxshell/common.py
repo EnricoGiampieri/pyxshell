@@ -83,6 +83,60 @@ def tail( stdin, size=None ):
         for line in data[len(data)-size:]:
             yield line
 
+@pipe
+def traverse( stdin ):
+    """
+    Recursively browse all items, as if nested levels where flatten.
+    Yield all items in the corresponding flatten list.
+
+        >>> list( [[1],[[2,3]],[[[4],[5]]]] | traverse() )
+        [1, 2, 3, 4, 5]
+    """
+    for item in stdin:
+        try:
+            if isinstance(item, str):
+                yield item
+            else:
+                for i in traverse(item):
+                    yield i
+        except TypeError:
+            yield item # not an iterable, yield the last item
+
+
+@pipe
+def wc( stdin, opt=None ):
+    """
+    Return a list indicating the total number of [lines, words, characters]
+    in the whole stream.
+
+         >>> list( [["It's every man's right to have babies if he wants them."],["But you can't have babies. "],["Don't you oppress me."]] | wc() )
+         [3, 20, 103]
+         >>> list( [["It's every man's right to have babies if he wants them."],["But you can't have babies. "],["Don't you oppress me."]] | wc("lines") )
+         [3]
+         >>> list( [["It's every man's right to have babies if he wants them."],["But you can't have babies. "],["Don't you oppress me."]] | wc("words") )
+         [20]
+         >>> list( [["It's every man's right to have babies if he wants them."],["But you can't have babies. "],["Don't you oppress me."]] | wc("characters") )
+        [103]
+    """
+    lines = 0
+    words = 0
+    characters = 0
+    # use traverse to un-nest any lists
+    for data in traverse(stdin):
+        lines += 1
+        for w in data.split():
+            words += 1
+        for c in data:
+            characters += 1
+
+    res={"lines":lines,"words":words,"characters":characters}
+    if opt == None:
+        # keys are given in a specific order, thus we cannot just use "in res"
+        return iter([res[k] for k in ["lines","words","characters"]])
+    else:
+        return iter([res[opt]])
+
+
 
 @pipe
 def curl(url):
@@ -169,8 +223,8 @@ def cut( stdin, fields=None, delimiter=None ):
 @pipe
 def join( stdin, delimiter=" " ):
     """
-        Join every list items in the input with the given delimiter.
-        The default delimiter is a space.
+    Join every list items in the input lines with the given delimiter.
+    The default delimiter is a space.
 
         >>> list( iter( ["- Yes, we are all different!\t- I'm not!"] ) | cut() | join() )
         ["- Yes, we are all different! - I'm not!"]
@@ -179,6 +233,19 @@ def join( stdin, delimiter=" " ):
     """
     for lst in stdin:
         yield delimiter.join(lst)
+
+
+@pipe
+def glue( stdin, delimiter=" " ):
+    """
+    Join every lines in the stream, using the given delimiter.
+    The default delimiter is a space.
+
+        >>> list( [[[1],[2]],[[3],[4]],[[5],[6]]] | traverse() | map(str) | glue(" ") )
+        ['1 2 3 4 5 6']
+    """
+    data = list(stdin)
+    return iter([delimiter.join(data)])
 
 
 @pipe
