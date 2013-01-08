@@ -35,6 +35,28 @@ def cat(*args, **kwargs):
 
 
 @pipe
+def head( stdin, size=None ):
+    """
+    Yield only a given number of lines, then stop.
+    If size=None, yield all the lines of the stream.
+
+        >>> list( iter(range(10)) | head() )
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        >>> list( iter(range(10)) | head(5) )
+        [0, 1, 2, 3, 4]
+        >>> list( iter(range(10)) | head(0) )
+        []
+    """
+    count = 0
+    for line in stdin:
+        if size != None and count >= size:
+            raise StopIteration
+        else:
+            yield line
+        count += 1
+
+
+@pipe
 def curl(url):
     """
     Fetch a URL, yielding output line-by-line.
