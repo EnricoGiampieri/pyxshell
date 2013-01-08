@@ -38,6 +38,7 @@ def cat(*args, **kwargs):
 def head( stdin, size=None ):
     """
     Yield only a given number of lines, then stop.
+
     If size=None, yield all the lines of the stream.
 
         >>> list( iter(range(10)) | head() )
@@ -54,6 +55,33 @@ def head( stdin, size=None ):
         else:
             yield line
         count += 1
+
+
+@pipe
+def tail( stdin, size=None ):
+    """
+    Yield  the given number of lines at the end of the stream.
+
+    If size=None, yield all the lines. If size!=None, it will wait for the data
+    stream to end before yielding lines.
+
+    >>> list( iter(range(10)) | tail() )
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    >>> list( iter(range(10)) | tail(5) )
+    [5, 6, 7, 8, 9]
+    >>> list( iter(range(10)) | tail(0) )
+    []
+    """
+    if size==None:
+        for line in stdin:
+            yield line
+    else:
+        # to compute the size from the end, it is mandatory to expand
+        # the generator in a list
+        data = list( stdin )
+        # once expanded, we can access via ranges
+        for line in data[len(data)-size:]:
+            yield line
 
 
 @pipe
