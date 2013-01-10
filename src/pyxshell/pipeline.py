@@ -152,6 +152,40 @@ class PipeLine(object):
                 getattr(self.coro_func, '__name__', repr(self.coro_func)))
         return PipeLine(pipe)
 
+    def __gt__( self, other):
+        if isinstance( other, str ):
+            with open(other,"w") as fd:
+                for line in iter(self):
+                    fd.write(line)
+
+        elif hasattr( other, "write" ):
+            for line in iter(self):
+                other.write(line)
+
+        elif hasattr(other,"append"):
+            del other[:]
+            for line in iter(self):
+                other.append(line)
+        else:
+            raise TypeError
+
+    def __rshift__( self, other):
+        if isinstance( other, str ):
+            with open(other,"a") as fd:
+                for line in iter(self):
+                    fd.write(line)
+
+        elif hasattr( other, "write" ):
+            for line in iter(self):
+                other.write(line)
+
+        elif hasattr(other,"append"):
+            for line in iter(self):
+                other.append(line)
+        else:
+            raise TypeError
+
+
     def __mul__(self, other):
         """
         Yield the cross product between two alternative pipes.
