@@ -153,6 +153,12 @@ class PipeLine(object):
         return PipeLine(pipe)
 
     def __gt__( self, other):
+        """
+        Redirect the generator output to a file or a variable.
+
+            >>> range(10) | map(str) | glue(",") > sys.stdout
+            0,1,2,3,4,5,6,7,8,9
+        """
         if isinstance( other, str ):
             with open(other,"w") as fd:
                 for line in iter(self):
