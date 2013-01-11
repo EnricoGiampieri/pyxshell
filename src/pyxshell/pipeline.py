@@ -134,12 +134,46 @@ class PipeLine(object):
 
     # self | target
     def __or__(self, target):
-        return target.__ror__(self)
+        """
+        Connect a pipe to something.
+
+        If the target is a callable, try to call it as a pipe.
+
+        NOTE: this does not work when connecting data structures to callable,
+        like in: `range(5) | tee`, because we cannot overload function (FIXME?).
+
+            >>> @pipe
+            .... def echo(i):
+            ....     yield i
+            ....
+            >>> @pipe
+            .... def tee(l):
+            ....     for i in l:
+            ....         print(i)
+            ....         yield i
+            ....
+            >>> list( echo("Brian") | tee() )
+            Brian
+            ['Brian']
+            >>> list( echo("Brian") | tee )
+            Brian
+            ['Brian']
+        """
+        # if target is a callable, the user may ask for a call to a PipeLine
+        # without parenthesis, like in: `echo("Brian") | tee`
+        if hasattr(target, '__call__'):
+            # thus, try to call the target on the input pipe
+            return target(iter(self))
+        else:
+            # if it is not a callable, it may be a pipeable
+            # just connect it as a pipe
+            return target.__ror__(self)
+
 
     # source | self
     def __ror__(self, source):
         r"""
-        Connect two pipes so that one's output becomes the other's input.
+        Connect something to a pipe so that one's output becomes the other's input.
 
         A simple example::
 
@@ -173,7 +207,7 @@ class PipeLine(object):
             Brian
             >>> d=[] ; echo("Brian") > d ; print(d)
             ['Brian']
-            >>> echo("Brian") > os./dev/null
+            >>> echo("Brian") > os.devnull
             
         """
         if isinstance( target, str ):
