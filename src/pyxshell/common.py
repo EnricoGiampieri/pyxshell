@@ -34,7 +34,7 @@ def cat(*args, **kwargs):
     return iter(open(*args, **kwargs))
 
 @pipe
-def tee(stdin, out=None):
+def tee(stdin, out=sys.stdout):
     """
     Save the input stream in a given file and forward it to the next pipe.
 
@@ -45,7 +45,9 @@ def tee(stdin, out=None):
         for line in stdin:
             yield line
     else:
-        assert( hasattr(out, "write") )
+        if not hasattr(out, "write"):
+            raise TypeError
+
         for line in stdin:
             out.write(str(line))
             yield line
