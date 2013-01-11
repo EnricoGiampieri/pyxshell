@@ -128,9 +128,15 @@ class PipeLine(object):
     def __repr__(self):
         return '<PipeLine: %s>' % getattr(self.coro_func, '__name__', repr(self.coro_func))
 
+    # in self
+    def __iter__(self):
+        return self.coro_func()
+
+    # self | target
     def __or__(self, target):
         return target.__ror__(self)
 
+    # source | self
     def __ror__(self, source):
         r"""
         Connect two pipes so that one's output becomes the other's input.
@@ -152,46 +158,70 @@ class PipeLine(object):
                 getattr(self.coro_func, '__name__', repr(self.coro_func)))
         return PipeLine(pipe)
 
-    def __gt__( self, other):
+
+    # self > target
+    def __gt__( self, target):
         """
         Redirect the generator output to a file or a variable.
+        Erase the existing content of the target.
 
             >>> range(10) | map(str) | glue(",") > sys.stdout
             0,1,2,3,4,5,6,7,8,9
         """
-        if isinstance( other, str ):
-            with open(other,"w") as fd:
+        if isinstance( target, str ):
+            # w = erase existing content
+            with open(target,"w") as fd:
                 for line in iter(self):
                     fd.write(line)
 
-        elif hasattr( other, "write" ):
+        elif hasattr( target, "write" ):
             for line in iter(self):
-                other.write(line)
+                target.write(line)
 
-        elif hasattr(other,"append"):
-            del other[:]
+        elif hasattr(target,"append"):
+            # empty the target
+            del target[:]
             for line in iter(self):
-                other.append(line)
-        else:
-            raise TypeError
-
-    def __rshift__( self, other):
-        if isinstance( other, str ):
-            with open(other,"a") as fd:
-                for line in iter(self):
-                    fd.write(line)
-
-        elif hasattr( other, "write" ):
-            for line in iter(self):
-                other.write(line)
-
-        elif hasattr(other,"append"):
-            for line in iter(self):
-                other.append(line)
+                target.append(line)
         else:
             raise TypeError
 
 
+    # self >> target
+    def __rshift__( self, target):
+        """
+        Append the generator output to a file or a variable.
+        Do not erase the existing content.
+
+        WARNING: this is an overloading of a binary operator, which have
+        priority over |. You should thus use parenthesis around the generators
+        sequence before using it.
+
+            >>> (["a","b"] | glue(",")) >> sys.stdout
+            a,b
+            >>> ["a","b"] | glue(",") >> sys.stdout
+            ...
+            TypeError: unsupported operand type(s) for |: 'list' and 'NoneType'
+        """
+        if isinstance( target, str ):
+            # a = append to file
+            with open(target,"a") as fd:
+                for line in iter(self):
+                    fd.write(line)
+
+        elif hasattr( target, "write" ):
+            for line in iter(self):
+                target.write(line)
+
+        elif hasattr(target,"append"):
+            for line in iter(self):
+                target.append(line)
+        else:
+            raise TypeError
+
+
+
+    # self * other
     def __mul__(self, other):
         """
         Yield the cross product between two alternative pipes.
@@ -215,6 +245,8 @@ class PipeLine(object):
             getattr(other, '__name__', repr(other)))
         return pipe(product)()
 
+
+    # self + other
     def __add__(self, other):
         """
         Yield the chained output of two alternative pipes.
@@ -237,9 +269,6 @@ class PipeLine(object):
             getattr(self.coro_func, '__name__', repr(self.coro_func)),
             getattr(other, '__name__', repr(other)))
         return pipe(concat)()
-
-    def __iter__(self):
-        return self.coro_func()
 
 
 def pipe(func):
