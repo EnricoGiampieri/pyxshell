@@ -161,11 +161,11 @@ def curl(url):
 
 
 @pipe
-def grep(stdin, pattern_src):
+def grep_e(stdin, pattern_src):
     """
     Filter strings on stdin for the given regex (uses :func:`re.search`).
 
-        >>> list(iter(['cat', 'cabbage', 'conundrum', 'cathedral']) | grep(r'^ca'))
+        >>> list(iter(['cat', 'cabbage', 'conundrum', 'cathedral']) | grep_e(r'^ca'))
         ['cat', 'cabbage', 'cathedral']
     """
     pattern = re.compile(pattern_src)
@@ -176,8 +176,13 @@ def grep(stdin, pattern_src):
 
 def is_in( line, patterns = [] ):
     for pattern in patterns:
-        if pattern in line:
-            return True
+        if hasattr(line, '__contains__'):
+            if pattern in line:
+                return True
+        else:
+            # for non iterable types (e.g. int)
+            if pattern==line:
+                return True
     return False
 
 @pipe
@@ -187,11 +192,46 @@ def grep_in( stdin, patterns=[] ):
 
         >>> list(iter(['cat', 'cabbage', 'conundrum', 'cathedral']) | grep_in(["cat","cab"]))
         ['cat', 'cabbage', 'cathedral']
+        >>> list( range(10) | grep_in(5) )
+        [5]
     """
+    # We may want to use grep_in(5) instead of grep_in([5])
+    if not hasattr(patterns, '__contains__'):
+        patterns = [patterns]
+
     for line in stdin:
         if is_in( line, patterns ):
             yield line
 
+@pipe
+def grep( stdin, pattern ):
+    """
+    Filters strings on stdin acconding to a given pattern.
+    Use a regular expression if the pattern can be compiled,
+    else use built-in operators (:func:`in` or :func:`==`).
+
+        >>> list( range(10) | grep(5) )
+        [5]
+        >>> list( range(10) | grep([5]) )
+        [5]
+        >>> list( ['cat', 'cabbage', 'conundrum', 'cathedral'] | grep('cat') )
+        ['cat', 'cathedral']
+        >>> list( ['cat', 'cabbage', 'conundrum', 'cathedral'] | grep('^c.*e') )
+        ['cabbage', 'cathedral']
+    """
+    try:
+        # is pattern_src a regular expression?
+        re.compile(pattern)
+    except:
+        # NO: use built-in comparison operators
+        gen = grep_in
+    else:
+        # YES: use the re module
+        gen = grep_e
+
+    # use the good generator
+    for line in gen( stdin, pattern ):
+        yield line
 
 @pipe
 def cut( stdin, fields=None, delimiter=None ):
