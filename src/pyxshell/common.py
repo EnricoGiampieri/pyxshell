@@ -33,6 +33,22 @@ def cat(*args, **kwargs):
     """
     return iter(open(*args, **kwargs))
 
+@pipe
+def tee(stdin, out=None):
+    """
+    Save the input stream in a given file and forward it to the next pipe.
+
+        >>> out=[];range(10) | map(str) | glue(",") | tee(sys.stdout) > out ; print out
+        0,1,2,3,4,5,6,7,8,9['0,1,2,3,4,5,6,7,8,9']
+    """
+    if out is None:
+        for line in stdin:
+            yield line
+    else:
+        assert( hasattr(out, "write") )
+        for line in stdin:
+            out.write(str(line))
+            yield line
 
 @pipe
 def head( stdin, size=None ):
