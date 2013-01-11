@@ -165,8 +165,16 @@ class PipeLine(object):
         Redirect the generator output to a file or a variable.
         Erase the existing content of the target.
 
-            >>> range(10) | map(str) | glue(",") > sys.stdout
-            0,1,2,3,4,5,6,7,8,9
+            >>> @pipe
+            ...: def echo(i):
+            ...:     yield i
+            ...:
+            >>> echo("Brian") > sys.stdout
+            Brian
+            >>> d=[] ; echo("Brian") > d ; print(d)
+            ['Brian']
+            >>> echo("Brian") > os./dev/null
+            
         """
         if isinstance( target, str ):
             # w = erase existing content
@@ -197,11 +205,20 @@ class PipeLine(object):
         priority over |. You should thus use parenthesis around the generators
         sequence before using it.
 
-            >>> (["a","b"] | glue(",")) >> sys.stdout
-            a,b
-            >>> ["a","b"] | glue(",") >> sys.stdout
+            >>> @pipe
+            ...: def no(stdin):
+            ...:     for line in stdin:
+            ...:         yield line
+            ...:
+            >>> (["Bri","an"] | no()) >> sys.stdout
+            Brian
+            >>> d=[] ; (["Bri","an"] | no()) >> d ; print(d)
+            ['Bri', 'an']
+            >>> (["Bri","an"] | no()) >> os.devnull
+            
+            >>> ["Bri","an"] | no() >> sys.stdout
             ...
-            TypeError: unsupported operand type(s) for |: 'list' and 'NoneType'
+            TypeError: no() takes exactly 1 argument (0 given)
         """
         if isinstance( target, str ):
             # a = append to file
