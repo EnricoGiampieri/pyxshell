@@ -23,7 +23,7 @@ class PipeLine(object):
         >>> pipeline
         <PipeLine: <lambda> | summer>
         >>> for item in pipeline:
-        ...     print item
+        ...     print(item)
         1
         3
         6
@@ -46,7 +46,7 @@ class PipeLine(object):
         >>> pl
         <PipeLine: my_generator>
         >>> for item in pl:
-        ...     print item
+        ...     print(item)
         1
         2
         3
@@ -62,7 +62,7 @@ class PipeLine(object):
         >>> pl
         <PipeLine: my_generator | add_one>
         >>> for item in pl:
-        ...     print item
+        ...     print(item)
         2
         3
         4
@@ -77,7 +77,7 @@ class PipeLine(object):
         >>> pl
         <PipeLine: my_generator | adder>
         >>> for item in pl:
-        ...     print item
+        ...     print(item)
         4
         5
         6
@@ -90,7 +90,7 @@ class PipeLine(object):
         >>> pl
         <PipeLine: my_generator | adder * adder>
         >>> for item in pl:
-        ...     print item
+        ...     print(item)
         (4, 7)
         (4, 8)
         (4, 9)
@@ -107,7 +107,7 @@ class PipeLine(object):
         >>> pl
         <PipeLine: my_generator | adder + adder>
         >>> for item in pl:
-        ...     print item
+        ...     print(item)
         4
         5
         6
@@ -278,7 +278,7 @@ def pipe(func):
         >>> @pipe
         ... def printer(stdin, outfile=None):
         ...     for item in stdin:
-        ...         print >>outfile, item
+        ...         print(item, file=outfile)
         ...         yield item
         >>> @pipe
         ... def echo(*values):

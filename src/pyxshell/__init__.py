@@ -1,5 +1,5 @@
-from pipeline import pipe
-import common
+from . import common
+from .pipeline import pipe
 
 
 def _get_tests():
@@ -28,7 +28,7 @@ def _get_tests():
     finder._from_module = _from_module
 
     suite = unittest.TestSuite()
-    for name, module in sys.modules.iteritems():
+    for name, module in sys.modules.items():
         if name.startswith('pyxshell'):
             try:
                 mod_suite = doctest.DocTestSuite(module, test_finder=finder)
