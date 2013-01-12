@@ -385,6 +385,12 @@ def sed(stdin, pattern_src, replacement, exclusive=False):
 
 
 @pipe
+def sort(stdin):
+    data=list(stdin)
+    return iter(sorted(data))
+
+
+@pipe
 def pretty_printer(stdin, **kwargs):
     """
     Pretty print each item on stdin and pass it straight through.
