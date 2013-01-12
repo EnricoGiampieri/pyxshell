@@ -391,6 +391,13 @@ def sort(stdin):
 
 
 @pipe
+def uniq(stdin):
+    seen = set()
+    for item in (x for x in stdin if x not in seen and not seen.add(x)):
+        yield item
+
+
+@pipe
 def pretty_printer(stdin, **kwargs):
     """
     Pretty print each item on stdin and pass it straight through.
