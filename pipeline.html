@@ -2,14 +2,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pipeline &mdash; Calabash v0.0.3
+    <title>pipeline &mdash; Pyxshell 0.0.3
  documentation</title>
+    
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -23,10 +26,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Calabash v0.0.3
+    <link rel="top" title="Pyxshell 0.0.3
  documentation" href="index.html" />
     <link rel="next" title="common" href="common.html" />
-    <link rel="prev" title="Calabash Documentation" href="index.html" />
+    <link rel="prev" title="Pyxshell Documentation" href="index.html" />
    
   
   <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
@@ -46,9 +49,9 @@
           <a href="common.html" title="common"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Calabash Documentation"
+          <a href="index.html" title="Pyxshell Documentation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Calabash v0.0.3
+        <li><a href="index.html">Pyxshell 0.0.3
  documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -59,16 +62,16 @@
           <div class="body">
             
   <div class="section" id="pipeline">
-<h1><a class="reference internal" href="#module-calabash.pipeline" title="calabash.pipeline"><tt class="xref py py-mod docutils literal"><span class="pre">pipeline</span></tt></a><a class="headerlink" href="#pipeline" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="#module-calabash.pipeline" title="calabash.pipeline"><tt class="xref py py-mod docutils literal"><span class="pre">calabash.pipeline</span></tt></a> contains the main implementation of calabash: the
+<h1><a class="reference internal" href="#module-pyxshell.pipeline" title="pyxshell.pipeline"><tt class="xref py py-mod docutils literal"><span class="pre">pipeline</span></tt></a><a class="headerlink" href="#pipeline" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="#module-pyxshell.pipeline" title="pyxshell.pipeline"><tt class="xref py py-mod docutils literal"><span class="pre">pyxshell.pipeline</span></tt></a> contains the main implementation of pyxshell: the
 <tt class="xref py py-class docutils literal"><span class="pre">PipeLine</span></tt> class. It also features the <tt class="xref py py-func docutils literal"><span class="pre">pipe()</span></tt> decorator to allow
 you to create your own pipeline components from simple Python generator
 functions.</p>
-<span class="target" id="module-calabash.pipeline"></span><dl class="class">
-<dt id="calabash.pipeline.PipeLine">
-<em class="property">class </em><tt class="descclassname">calabash.pipeline.</tt><tt class="descname">PipeLine</tt><big>(</big><em>coro_func</em><big>)</big><a class="reference internal" href="_modules/calabash/pipeline.html#PipeLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#calabash.pipeline.PipeLine" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-pyxshell.pipeline"></span><dl class="class">
+<dt id="pyxshell.pipeline.PipeLine">
+<em class="property">class </em><tt class="descclassname">pyxshell.pipeline.</tt><tt class="descname">PipeLine</tt><big>(</big><em>coro_func</em><big>)</big><a class="reference internal" href="_modules/pyxshell/pipeline.html#PipeLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyxshell.pipeline.PipeLine" title="Permalink to this definition">¶</a></dt>
 <dd><p>A coroutine wrapper which enables pipelining syntax.</p>
-<p><a class="reference internal" href="#calabash.pipeline.PipeLine" title="calabash.pipeline.PipeLine"><tt class="xref py py-class docutils literal"><span class="pre">PipeLine</span></tt></a> allows you to flatten once-nested code just by wrapping
+<p><a class="reference internal" href="#pyxshell.pipeline.PipeLine" title="pyxshell.pipeline.PipeLine"><tt class="xref py py-class docutils literal"><span class="pre">PipeLine</span></tt></a> allows you to flatten once-nested code just by wrapping
 your generators. The class provides combinators in the form of operators,
 allowing you to plug two generators together without having to nest lots of
 function calls. For example:</p>
@@ -81,7 +84,7 @@ function calls. For example:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span>
 <span class="go">&lt;PipeLine: &lt;lambda&gt; | summer&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pipeline</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">item</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 <span class="go">1</span>
 <span class="go">3</span>
 <span class="go">6</span>
@@ -90,10 +93,10 @@ function calls. For example:</p>
 </div>
 <p>The yielded output of each generator in the chain becomes the input for the
 next. The rules for writing a pipeline function are simple:
-<a class="reference internal" href="#calabash.pipeline.PipeLine" title="calabash.pipeline.PipeLine"><tt class="xref py py-class docutils literal"><span class="pre">PipeLine</span></tt></a> requires a callable which accepts a single argument (the
+<a class="reference internal" href="#pyxshell.pipeline.PipeLine" title="pyxshell.pipeline.PipeLine"><tt class="xref py py-class docutils literal"><span class="pre">PipeLine</span></tt></a> requires a callable which accepts a single argument (the
 input), and returns an iterator. The only exception is the first part of
 the pipeline, which should accept no arguments (as there will be no input).</p>
-<p>To create pipeline functions, use the <a class="reference internal" href="#calabash.pipeline.pipe" title="calabash.pipeline.pipe"><tt class="xref py py-func docutils literal"><span class="pre">pipe()</span></tt></a> decorator:</p>
+<p>To create pipeline functions, use the <a class="reference internal" href="#pyxshell.pipeline.pipe" title="pyxshell.pipeline.pipe"><tt class="xref py py-func docutils literal"><span class="pre">pipe()</span></tt></a> decorator:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nd">@pipe</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">my_generator</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="k">yield</span> <span class="mi">1</span>
@@ -103,7 +106,7 @@ the pipeline, which should accept no arguments (as there will be no input).</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pl</span>
 <span class="go">&lt;PipeLine: my_generator&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">item</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 <span class="go">1</span>
 <span class="go">2</span>
 <span class="go">3</span>
@@ -119,7 +122,7 @@ argument to the function:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pl</span>
 <span class="go">&lt;PipeLine: my_generator | add_one&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">item</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 <span class="go">2</span>
 <span class="go">3</span>
 <span class="go">4</span>
@@ -134,7 +137,7 @@ argument to the function:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pl</span>
 <span class="go">&lt;PipeLine: my_generator | adder&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">item</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 <span class="go">4</span>
 <span class="go">5</span>
 <span class="go">6</span>
@@ -147,7 +150,7 @@ multiplying two pipelines gets you their cross product:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pl</span>
 <span class="go">&lt;PipeLine: my_generator | adder * adder&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">item</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 <span class="go">(4, 7)</span>
 <span class="go">(4, 8)</span>
 <span class="go">(4, 9)</span>
@@ -164,7 +167,7 @@ multiplying two pipelines gets you their cross product:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pl</span>
 <span class="go">&lt;PipeLine: my_generator | adder + adder&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">item</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 <span class="go">4</span>
 <span class="go">5</span>
 <span class="go">6</span>
@@ -176,13 +179,13 @@ multiplying two pipelines gets you their cross product:</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="calabash.pipeline.pipe">
-<tt class="descclassname">calabash.pipeline.</tt><tt class="descname">pipe</tt><big>(</big><em>func</em><big>)</big><a class="reference internal" href="_modules/calabash/pipeline.html#pipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#calabash.pipeline.pipe" title="Permalink to this definition">¶</a></dt>
+<dt id="pyxshell.pipeline.pipe">
+<tt class="descclassname">pyxshell.pipeline.</tt><tt class="descname">pipe</tt><big>(</big><em>func</em><big>)</big><a class="reference internal" href="_modules/pyxshell/pipeline.html#pipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyxshell.pipeline.pipe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap a function as a pipeline.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nd">@pipe</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">printer</span><span class="p">(</span><span class="n">stdin</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">stdin</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outfile</span><span class="p">,</span> <span class="n">item</span>
+<span class="gp">... </span>        <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">outfile</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">yield</span> <span class="n">item</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nd">@pipe</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">):</span>
@@ -214,7 +217,7 @@ multiplying two pipelines gets you their cross product:</p>
         <div class="sphinxsidebarwrapper"><h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Calabash Documentation</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Pyxshell Documentation</a></li>
       <li>Next: <a href="common.html" title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">common</span></tt></a></li>
   </ul></li>
 </ul>
@@ -226,7 +229,7 @@ multiplying two pipelines gets you their cross product:</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
