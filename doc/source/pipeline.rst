@@ -1,10 +1,10 @@
-:mod:`~calabash.pipeline`
+:mod:`~pyxshell.pipeline`
 =========================
 
-:mod:`calabash.pipeline` contains the main implementation of calabash: the
+:mod:`pyxshell.pipeline` contains the main implementation of pyxshell: the
 :class:`PipeLine` class. It also features the :func:`pipe` decorator to allow
 you to create your own pipeline components from simple Python generator
 functions.
 
-.. automodule:: calabash.pipeline
+.. automodule:: pyxshell.pipeline
     :members:
