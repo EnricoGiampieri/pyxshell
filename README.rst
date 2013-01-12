@@ -1,25 +1,25 @@
-calabash
+Pyxshell
 ========
 
-Calabash aims to bring bash-style pipelining to Python generators.
+Pyxshell aims to bring text stream manipulation commands with pipelines,
+like in Unix shells, but in pure Python.
 
 A short example::
 
-    >>> from calabash.common import grep
-    >>> pl = iter(['python', 'ruby', 'jython']) | grep(r'yt')
-    >>> pl
-    <PipeLine: iter | grep>
-    >>> for item in pl:
-    ...     print item
+    >>> from pyxshell.common import grep,glue
+    >>> pl = []
+    >>> ['python', 'ruby', 'jython'] | grep(r'yt') > pl
+    >>> pl | glue("\n") > sys.stdout
     python
     jython
+
 
 Installation
 ------------
 
 You can get the module from PyPI::
 
-    pip install calabash
+    pip install pyxshell
 
 (Un)license
 ===========

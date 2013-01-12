@@ -1,7 +1,7 @@
 Pyxshell Documentation
 ======================
 
-Pyxshell aims to bring bash-style pipelining to Python generators.
+Text stream manipulation commands with pipelines, like in Unix shells, but in pure Python.
 
 A short example::
 
