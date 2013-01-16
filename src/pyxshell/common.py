@@ -3,10 +3,27 @@
 import os
 import sys
 import re
+import time
 import collections
 import fnmatch
 
 from pyxshell.pipeline import pipe
+
+@pipe
+def sleep(stdin,seconds):
+    """
+    Yield the current item after having waited a given number of seconds
+
+        >>> for i in ( range(3) | sleep(1) ):
+            print(i)
+           ....:
+        0
+        1
+        2
+    """
+    for i in stdin:
+        time.sleep(seconds)
+        yield i
 
 
 @pipe
