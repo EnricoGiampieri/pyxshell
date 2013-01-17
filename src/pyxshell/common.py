@@ -325,6 +325,30 @@ def glue( stdin, delimiter=" " ):
 
 
 @pipe
+def append stdin, val ):
+    """
+    Yield the given item + val
+
+        >>> list( range(5) | append(1) | map(str) | append(" ") | map(list) | append([1]) )
+        [['1', ' ', 1], ['2', ' ', 1], ['3', ' ', 1], ['4', ' ', 1], ['5', ' ', 1]]
+    """
+    for i in stdin:
+        yield i+val
+
+
+@pipe
+def prepend( stdin, val ):
+    """
+    Yield the given val + item
+
+        >>> list( range(5) | prepend(1) | map(str) | prepend(" ") | map(list) | prepend([1]) )
+        [[1, ' ', '1'], [1, ' ', '2'], [1, ' ', '3'], [1, ' ', '4'], [1, ' ', '5']]
+    """
+    for i in stdin:
+        yield val+i
+
+
+@pipe
 def dos2unix( stdin ):
     """
     Replace DOS-like newline characters by UNIX-like ones.
