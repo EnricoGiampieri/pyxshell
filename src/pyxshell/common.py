@@ -119,6 +119,30 @@ def tail( stdin, size=None ):
         for line in data[len(data)-size:]:
             yield line
 
+
+@pipe
+def skip( stdin, size=0 ):
+    """
+    Skip the given number of lines, then yield the remaining ones.
+
+        >>> list( range(10) | skip(5) )
+        [5, 6, 7, 8, 9]
+        >>> list( range(10) | skip() )
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    """
+    # first, loop that count
+    count = 0
+    for line in stdin:
+        if count >= size:
+            yield line
+            break
+        count += 1
+
+    # then, simple loop
+    for line in stdin:
+        yield line
+
+
 @pipe
 def traverse( stdin ):
     """
