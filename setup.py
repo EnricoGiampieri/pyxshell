@@ -18,4 +18,5 @@ setup(
     packages         = find_packages(where='src'),
     package_dir      = {'': 'src'},
     test_suite       = 'pyxshell._get_tests',
+    tests_require    = ["tox", "pytest", "pytest-pep8"],
 )
