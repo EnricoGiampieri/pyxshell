@@ -10,6 +10,13 @@ import fnmatch
 from pyxshell.pipeline import pipe
 
 
+# Python 2/3 compatibility
+if sys.version < '3':
+    basestring = (str, unicode)
+else:
+    basestring = (bytes, str)
+
+
 @pipe
 def sleep(stdin, seconds):
     """
@@ -46,7 +53,7 @@ def cat(*args, **kwargs):
     >>> src_file = __file__.replace('.pyc', '.py')
     >>> for line in cat(src_file):
     ...     if line.startswith('def cat'):
-    ...          print repr(line)
+    ...          print(repr(line))
     'def cat(*args, **kwargs):\n'
     """
     return iter(open(*args, **kwargs))
@@ -217,7 +224,7 @@ def curl(url):
 
     >>> UNLICENSE = 'http://unlicense.org/UNLICENSE'
     >>> for line in curl(UNLICENSE):  # doctest: +SKIP
-    ...     print line
+    ...     print(line)
     This is free and unencumbered software released into the public domain.
     """
     import urllib2
@@ -511,7 +518,7 @@ def map(stdin, func):
     """
     Map each item on stdin through the given function.
 
-    >>> list(xrange(5) | map(lambda x: x + 2))
+    >>> list(range(5) | map(lambda x: x + 2))
     [2, 3, 4, 5, 6]
     """
     for item in stdin:
@@ -523,7 +530,7 @@ def filter(stdin, predicate):
     """
     Only pass through items for which `predicate(item)` is truthy.
 
-    >>> list(xrange(5) | filter(lambda x: x % 2 == 0))
+    >>> list(range(5) | filter(lambda x: x % 2 == 0))
     [0, 2, 4]
     """
     for item in stdin:
@@ -536,20 +543,21 @@ def sh(stdin, command=None, check_success=False):
     r"""
     Run a shell command, send it input, and produce its output.
 
-    >>> print ''.join(echo("h\ne\nl\nl\no") | sh('sort -u'))
+    >>> print(''.join(echo("h\ne\nl\nl\no") | sh('sort -u')).strip())
     e
     h
     l
     o
-    <BLANKLINE>
     >>> for line in sh('echo Hello World'):
-    ...     print line,
+    ...     print(line.strip())
     Hello World
-    >>> for line in sh('false', check_success=True):
-    ...     print line, # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    CalledProcessError: Command '['false']' returned non-zero exit status 1
+    >>> try:
+    ...     for line in sh('false', check_success=True):
+    ...         print(line.strip())  # doctest: +ELLIPSIS
+    ... except Exception as error:
+    ...     print(error.__class__.__name__.strip())
+    <BLANKLINE>
+    CalledProcessError
     """
     import subprocess
     import shlex
@@ -564,13 +572,14 @@ def sh(stdin, command=None, check_success=False):
                             stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE)
 
-    try:
-        for line in stdin:
-            pipe.stdin.write(line)
-        pipe.stdin.close()
-        for line in pipe.stdout:
-            yield line
-    finally:
-        result = pipe.wait()
-        if check_success and result != 0:
-            raise subprocess.CalledProcessError(result, command)
+    pipe_stdin = " ".join(stdin)
+    if sys.version[0] == '3':
+        # FIXME: pipe.communicate() expects bytes string
+        pipe_stdin = bytes(pipe_stdin, "utf-8")
+
+    stdout, stderr = pipe.communicate(pipe_stdin)
+    yield stdout.decode("utf-8")
+
+    result = pipe.returncode
+    if check_success and result != 0:
+        raise subprocess.CalledProcessError(result, command)
