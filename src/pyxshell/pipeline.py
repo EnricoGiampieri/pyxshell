@@ -179,7 +179,10 @@ class PipeLine(object):
 
         A simple example::
 
-        >>> from itertools import imap
+        >>> try:
+        ...     from itertools import imap
+        ... except ImportError:
+        ...     imap = map
         >>> p = (PipeLine(lambda: iter([1, 2, 3, 4])) |
         ...      PipeLine(lambda stdin: imap(lambda x: x + 3, stdin)))
         >>> p
@@ -252,14 +255,14 @@ class PipeLine(object):
         Brian
         >>> d = []
         >>> (["Bri", "an"] | no()) >> d
-        >>> print d
+        >>> print(d)
         ['Bri', 'an']
         >>> (["Bri", "an"] | no()) >> os.devnull
         >>> try:
         ...     ["Bri", "an"] | no() >> sys.stdout
         ... except Exception as error:
-        ...     print error.__class__.__name__, str(error)
-        TypeError no() takes exactly 1 argument (0 given)
+        ...     print(error.__class__.__name__)
+        TypeError
         """
         if isinstance(target, str):
             # a = append to file
@@ -333,7 +336,7 @@ def pipe(func):
     >>> @pipe
     ... def printer(stdin, outfile=None):
     ...     for item in stdin:
-    ...         print item
+    ...         print(item)
     ...         yield item
     ...
     >>> @pipe
@@ -342,10 +345,10 @@ def pipe(func):
     ...         yield value
     ...
     >>> p = printer()
-    >>> print p
+    >>> print(p)
     <PipeLine: printer>
     >>> p = echo(1, 2, 3) | p
-    >>> print p
+    >>> print(p)
     <PipeLine: echo | printer>
     >>> output = list(p)
     1
