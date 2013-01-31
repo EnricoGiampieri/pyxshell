@@ -539,6 +539,18 @@ def filter(stdin, predicate):
 
 
 @pipe
+def pairwise(iterable):
+    """
+    Iter over an iterable, two items by two items
+
+    >>> list(range(10)|pairwise())
+    [(0, 1), (2, 3), (4, 5), (6, 7), (8, 9)]
+    """
+    a = iter(iterable)
+    return zip(a, a)
+
+
+@pipe
 def sh(stdin, command=None, check_success=False):
     r"""
     Run a shell command, send it input, and produce its output.
